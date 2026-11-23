@@ -12,7 +12,7 @@ const TABS = [
 
 export function TabBar() {
   const path = usePathname();
-  if (path.startsWith("/practice")) return null; // distraction-free practice
+  if (path.startsWith("/practice") || path === "/unlock") return null; // distraction-free practice / lock screen
   return (
     <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-line bg-bg/90 backdrop-blur">
       <ul className="mx-auto flex max-w-lg justify-around px-2 pt-2">

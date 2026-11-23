@@ -52,6 +52,7 @@ The microphone needs a **secure context**: `localhost` or HTTPS. To test on your
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Coaching with Claude. Used first if set. Default model `claude-sonnet-5-5`. |
 | `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL` | Any OpenAI-compatible chat endpoint for coaching. This key also enables server speech-to-text and text-to-speech. |
 | `STT_MODEL` | Server transcription model (default `whisper-1`). Without it, the browser's built-in speech recognition is used. |
+| `ACCESS_CODE` | **Recommended when deployed.** Locks the app and its API behind a code entered once per device (remembered for a year). Leave empty for open access. |
 | `TTS_MODEL`, `TTS_VOICE` | Server voice. Without it, the device's built-in voice is used. |
 
 Keys are read only by the server-side route handlers in `app/api/*`. They are never sent to the browser.
@@ -64,7 +65,11 @@ Keys are read only by the server-side route handlers in `app/api/*`. They are ne
 3. If you denied access earlier: Settings → Safari → Microphone (or Settings → Apps → Safari).
 
 ## Deploy
-**Vercel (recommended):** import the repo, add the environment variables, deploy. No other configuration is needed.
+**Vercel (recommended):**
+1. Sign in at vercel.com with GitHub → **Add New… → Project** → import this repo (Next.js is detected automatically).
+2. Add environment variables: `ANTHROPIC_API_KEY` (and optionally `OPENAI_API_KEY`), plus an `ACCESS_CODE` so the public link can't spend your credits.
+3. **Deploy.** Later pushes to `main` redeploy automatically; after changing a variable, use **Deployments → ⋯ → Redeploy**.
+4. Also set a monthly spend limit in your AI provider's console.
 
 **Any Node host:** `npm run build && npm start` (port 3000) behind HTTPS.
 
