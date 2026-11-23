@@ -62,7 +62,7 @@ export function demoAnalysis(q: Question, a: Attempt, targetSec: number, previou
   const improvedVersion =
     a.text.wordCount < 8
       ? "(Demo mode needs a longer answer to rewrite. Connect an AI provider for full rewrites.)"
-      : [lead, ...rest, lead && rest.length ? "That's why this matters." : ""].filter(Boolean).join(" ");
+      : [lead, ...rest, lead && rest.length && !cues.conclusion ? "That's why this matters." : ""].filter(Boolean).join(" ");
 
   const fix = WEAKNESS_INFO[tag];
   const half = Math.max(15, Math.round(targetSec / 2));
