@@ -1,9 +1,15 @@
 // Articulate AI service worker: app-shell caching so practice works offline (with on-device estimates).
-const VERSION = "aai-v1";
+const VERSION = "aai-v2";
 const SHELL = ["/", "/practice?d=5", "/progress", "/coach", "/settings", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));
+  // Cache each shell page individually, skipping redirects (e.g. to the access-code screen):
+  // Safari refuses to serve a redirected response for a navigation.
+  e.waitUntil(
+    caches.open(VERSION)
+      .then((c) => Promise.all(SHELL.map((u) => fetch(u).then((res) => (res.ok && !res.redirected ? c.put(u, res) : null)).catch(() => null))))
+      .then(() => self.skipWaiting()),
+  );
 });
 
 self.addEventListener("activate", (e) => {
@@ -25,7 +31,7 @@ self.addEventListener("fetch", (e) => {
   if (req.mode === "navigate") {
     e.respondWith(
       fetch(req)
-        .then((res) => { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); return res; })
+        .then((res) => { if (res.ok && res.type === "basic" && !res.redirected) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); } return res; })
         .catch(async () => (await caches.match(req)) || (await caches.match(req, { ignoreSearch: true })) || (await caches.match("/practice?d=5")) || caches.match("/")),
     );
   }

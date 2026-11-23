@@ -152,6 +152,7 @@ function Practice() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ question: k === 2 ? { ...question, text: promptText } : question, attempt, previous, targetSec: target, notesLanguage: settings.notesLanguage, isFollowUp: k === 2 }),
       });
+      if (res.status === 401) { window.location.href = "/unlock?next=/"; return; }
       if (!res.ok) throw new Error(String(res.status));
       const d = await res.json();
       analysis = d.analysis;
